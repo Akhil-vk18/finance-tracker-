@@ -1,0 +1,20 @@
+Date       ,Amount ,Category ,Discription
+07-02-2025 ,1000.0 ,Income   ,salary
+02-02-2025 , 200.0 ,Expense  ,dept
+07-02-2025 ,1000.0 ,Income   ,Salary
+05-02-2025 , 500.0 ,Expense  ,Groceries
+04-02-2025 , 150.0 ,Expense  ,Transport
+03-02-2025 ,1200.0 ,Income   ,Freelance Work
+02-02-2025 , 200.0 ,Expense  ,Debt
+02-02-2025 , 300.0 ,Expense  ,Electricity Bill
+01-02-2025 ,  50.0 ,Expense  ,Coffee
+01-02-2025 , 600.0 ,Income   ,Side Business
+31-01-2025 , 100.0 ,Expense  ,Internet Bill
+30-01-2025 , 700.0 ,Income   ,Bonus
+29-01-2025 , 250.0 ,Expense  ,Shopping
+28-01-2025 , 450.0 ,Expense  ,Medical Expenses
+27-01-2025 , 100.0 ,Expense  ,Entertainment
+26-01-2025 ,  50.0 ,Expense  ,Snacks
+25-01-2025 , 800.0 ,Income   ,Project Payment
+24-01-2025 ,  90.0 ,Expense  ,Subscription Service
+23-01-2025 , 350.0 ,Expense  ,House Rent

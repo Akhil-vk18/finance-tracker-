@@ -1,0 +1,16 @@
+personal finance tracker
+-------------
+
+packages : pandas(to categorise data,allow us to load inthe csv file ),matplotlib(to plot graph)
+
+data_entry.py = contains functions that collects data from the user .
+main.py = main flow of the program
+
+    pass #serves as a placeholder for code that you plan to implement later.
+
+csv file acts as a database (we can see differnt transcations.)
+
+data_frame is object in pandas that allow us to access differnt rows and coloumns from a csv file 
+
+to write into  a csv file use csv writer
+after transaction ask the user to whther he need to plot a graph 

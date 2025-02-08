@@ -13,20 +13,25 @@ class CSV:
     def initialize_csv(cls):
         """Initialize the CSV file with the required columns if it doesn't exist."""
         try:
+            # Try to read the CSV file to check if it exists
             pd.read_csv(cls.CSV_FILE)
         except FileNotFoundError:
+            # If the file does not exist, create a new DataFrame with the specified columns
             df = pd.DataFrame(columns=cls.columns)
+            # Save the DataFrame to a CSV file
             df.to_csv(cls.CSV_FILE, index=False)
 
     @classmethod
     def entry_data(cls, date, amount, category, description):
         """Add a new entry to the CSV file."""
+        # Create a dictionary for the new entry
         new_entry = {
             "Date": date,
             "Amount": amount,
             "Category": category,
             "Description": description
         }
+        # Open the CSV file in append mode and write the new entry
         with open(cls.CSV_FILE, "a", newline="") as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=cls.columns)
             writer.writerow(new_entry)
@@ -34,17 +39,23 @@ class CSV:
     @classmethod
     def get_transactions(cls, start_date, end_date):
         """Retrieve transactions within the specified date range."""
+        # Read the CSV file into a DataFrame
         df = pd.read_csv(cls.CSV_FILE)
 
+        # Check if the 'Date' column exists in the DataFrame
         if 'Date' not in df.columns:
             st.error("The CSV file does not contain the 'Date' column.")
             return pd.DataFrame(columns=cls.columns)
 
+        # Convert the 'Date' column to datetime format
         df["Date"] = pd.to_datetime(df["Date"], format=CSV.date_format)
+        # Convert the start and end dates to datetime format
         start_date = datetime.strptime(start_date, CSV.date_format)
         end_date = datetime.strptime(end_date, CSV.date_format)
 
+        # Create a mask to filter the DataFrame for the specified date range
         mask = (df["Date"] >= start_date) & (df["Date"] <= end_date)
+        # Apply the mask to the DataFrame to get the filtered transactions
         filtered_df = df.loc[mask]
 
         return filtered_df
@@ -97,6 +108,12 @@ def plot_transaction(df):
     plt.grid(True)
     st.pyplot(plt)
 
+@st.fragment
+def show_plot(df):
+    """Show the plot button and plot the transaction data when clicked."""
+    if st.button("Show Plot"):
+        plot_transaction(df)
+
 def main():
     """Main function to run the Streamlit app."""
     st.title("Personal Finance Tracker")
@@ -131,8 +148,7 @@ def main():
                 st.write(f"Total Income: ₹{total_income:.2f}")
                 st.write(f"Total Expense: ₹{total_expense:.2f}")
                 st.write(f"Net Savings: ₹{(total_income - total_expense):.2f}")
-                if st.button("Show Plot"):
-                    plot_transaction(df)
+                show_plot(df)  # Call the show_plot function to display the plot button and plot the data
             else:
                 st.warning("No transactions found in the given date range.")
 

@@ -4,6 +4,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
 
+# Set the Streamlit app to wide mode
+st.set_page_config(layout="wide")
+
 class CSV:
     date_format = "%d-%m-%Y"  # Date format used in the CSV file
     CSV_FILE = "finance_data.csv"  # Name of the CSV file
@@ -61,42 +64,31 @@ class CSV:
         return filtered_df
 
 def plot_transaction(df):
-    """Plot income and expenses over time."""
-    st.write("Plotting data...")  # Debug statement
-    st.write(df)  # Debug statement to show the DataFrame
-
+    """Plot income and expenses over time using Matplotlib."""
     # Set the "Date" column as the index of the DataFrame
     df.set_index("Date", inplace=True)
 
     # Create a new DataFrame for income data
-    # Filter the original DataFrame to include only rows where "Category" is "Income"
-    # Resample the data to a daily frequency and sum the amounts for each day
-    # Reindex the DataFrame to ensure it has the same index as the original DataFrame, filling missing dates with zeros
     income_df = df[df["Category"] == "Income"].resample("D").sum().reindex(df.index, fill_value=0)
 
     # Create a new DataFrame for expense data
-    # Filter the original DataFrame to include only rows where "Category" is "Expense"
+# Filter the original DataFrame to include only rows where "Category" is "Expense"
     # Resample the data to a daily frequency and sum the amounts for each day
     # Reindex the DataFrame to ensure it has the same index as the original DataFrame, filling missing dates with zeros
     expense_df = df[df["Category"] == "Expense"].resample("D").sum().reindex(df.index, fill_value=0)
-
-    st.write("Income DataFrame:")  # Debug statement
-    st.write(income_df)  # Debug statement to show the income DataFrame
-    st.write("Expense DataFrame:")  # Debug statement
-    st.write(expense_df)  # Debug statement to show the expense DataFrame
 
     # Plotting the data using Matplotlib
     plt.figure(figsize=(10, 5))
     
     # Plotting the income data
-    # The x-axis values are the dates (index of income_df)
+# The x-axis values are the dates (index of income_df)
     # The y-axis values are the amounts from the "Amount" column of income_df
     # The label "INCOME" will be used in the plot legend
     # The color "g" (green) is used for the income line
     plt.plot(income_df.index, income_df["Amount"], label="INCOME", color="g")
 
     # Plotting the expense data
-    # The x-axis values are the dates (index of expense_df)
+# The x-axis values are the dates (index of expense_df)
     # The y-axis values are the amounts from the "Amount" column of expense_df
     # The label "EXPENSE" will be used in the plot legend
     # The color "r" (red) is used for the expense line
@@ -118,14 +110,18 @@ def main():
     """Main function to run the Streamlit app."""
     st.title("Personal Finance Tracker")
 
+    # Sidebar content
+    st.sidebar.title("Navigation")
+    st.sidebar.markdown("Use the menu below to navigate through the app.")
+    
     # Sidebar menu
-    menu = ["Add Transaction", "View Transactions and Summary"]
+    menu = ["🏠 Add Transaction", "📊 View Transactions and Summary"]
     choice = st.sidebar.selectbox("Menu", menu)
 
     # Initialize the CSV file
     CSV.initialize_csv()
 
-    if choice == "Add Transaction":
+    if choice == "🏠 Add Transaction":
         st.subheader("Add New Transaction")
         date = st.date_input("Date")
         description = st.text_input("Description")
@@ -135,19 +131,33 @@ def main():
             CSV.entry_data(date.strftime(CSV.date_format), amount, category, description)
             st.success("Entry added successfully!")
 
-    elif choice == "View Transactions and Summary":
+    elif choice == "📊 View Transactions and Summary":
         st.subheader("View Transactions and Summary")
         start_date = st.date_input("Start Date")
         end_date = st.date_input("End Date")
         if st.button("Show Transactions"):
             df = CSV.get_transactions(start_date.strftime(CSV.date_format), end_date.strftime(CSV.date_format))
             if not df.empty:
-                st.write(df)
+                st.write("### Transactions")
+                st.dataframe(df)  # Display the DataFrame in a tabular format
+                st.write("### Summary")
                 total_income = df[df["Category"] == "Income"]["Amount"].sum()
                 total_expense = df[df["Category"] == "Expense"]["Amount"].sum()
-                st.write(f"Total Income: ₹{total_income:.2f}")
-                st.write(f"Total Expense: ₹{total_expense:.2f}")
-                st.write(f"Net Savings: ₹{(total_income - total_expense):.2f}")
+                st.write(f"**Total Income:** ₹{total_income:.2f}")
+                st.write(f"**Total Expense:** ₹{total_expense:.2f}")
+                st.write(f"**Net Savings:** ₹{(total_income - total_expense):.2f}")
+                
+                # Create two columns for income and expense DataFrames
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    st.write("### Income Data")
+                    st.dataframe(df[df["Category"] == "Income"])
+                
+                with col2:
+                    st.write("### Expense Data")
+                    st.dataframe(df[df["Category"] == "Expense"])
+                
                 show_plot(df)  # Call the show_plot function to display the plot button and plot the data
             else:
                 st.warning("No transactions found in the given date range.")
